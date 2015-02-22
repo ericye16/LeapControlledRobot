@@ -12,7 +12,7 @@ import serial
 from time import sleep
 
 def serial_init():
-    port = serial.Serial(0)
+    port = serial.Serial("/dev/tty.usbmodem1411", 9600, serial.EIGHTBITS, serial.PARITY_EVEN, serial.STOPBITS_ONE, None, False, False, None, False, None)
     print "Connecting to " + port.name
     return port 
 
@@ -20,14 +20,18 @@ def serial_deinit(port):
     if port:
         port.close()
 
-def send_to_arm(arm, angle_wrist, angle_rot_wrist, hand_fistedness, 
-    angle_hand_yaw, angle_arm, angle_arm_yaw):
+def send_to_arm(arm, angle_wrist, angle_rot_wrist, angle_hand_yaw, hand_fistedness, angle_arm, angle_arm_yaw):
     arm.write("\x02")
-    arm.write(int(angle_wrist))
-    # etc
+    arm.write(str(angle_wrist) + '\n')
+    arm.write(str(angle_rot_wrist) + '\n')
+    arm.write(str(angle_hand_yaw) + '\n')
+    arm.write(str(hand_fistedness) + '\n')
+    arm.write(str(angle_arm) + '\n')
+    arm.write(str(angle_arm_yaw) + '\n')
     arm.write("\x03")
+    time.sleep(0.1)
 
-def update(controller, arm):
+def update(controller, port):
     frame = controller.frame()
     hands = frame.hands
     if hands.is_empty:
@@ -45,11 +49,11 @@ def update(controller, arm):
     # wrist rotation angle
     angle_rot_wrist = degrees(hand.direction.roll)
 
-    # how fisted the hand is
-    hand_fistedness = hand.grab_strength
-
     # hand yaw
     angle_hand_yaw = degrees(hand.direction.yaw)
+
+    # how fisted the hand is
+    hand_fistedness = hand.grab_strength * 100
 
     # arm angle
     arm = hand.arm
@@ -61,18 +65,20 @@ def update(controller, arm):
         angle_arm_yaw = 0
 
     def print_arm_status():
-        print "Wrist: %d, Rot: %d, Fist: %d%%, Arm: %d" % (angle_wrist, angle_rot_wrist, hand_fistedness * 100, angle_arm)
+        print "WriPit: %d, WriRot: %d, WriYaw: %d, Fist: %d%%, ArmPit: %d, ArmYaw: %d" % (angle_wrist, angle_rot_wrist, angle_hand_yaw, hand_fistedness, angle_arm, angle_arm_yaw)
 
     print_arm_status()
 
-    # send_to_arm(...)
+    send_to_arm(port, angle_wrist, angle_rot_wrist, angle_hand_yaw,hand_fistedness, angle_arm, angle_arm_yaw)
+
 
 def main():
     # Create a sample controller
     controller = Leap.Controller()
 
     # Connect to arduino controlling the arm
-    arm = None # serial_init()
+    arm = serial_init()
+    print("ARM: ", arm)
 
     # Keep this process running until interrupted
     print "Press ctrl+c to quit..."
