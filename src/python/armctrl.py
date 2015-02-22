@@ -20,6 +20,13 @@ def serial_deinit(port):
     if port:
         port.close()
 
+def send_to_arm(arm, angle_wrist, angle_rot_wrist, hand_fistedness, 
+    angle_hand_yaw, angle_arm, angle_arm_yaw):
+    arm.write("\x02")
+    arm.write(int(angle_wrist))
+    # etc
+    arm.write("\x03")
+
 def update(controller, arm):
     frame = controller.frame()
     hands = frame.hands
@@ -41,17 +48,24 @@ def update(controller, arm):
     # how fisted the hand is
     hand_fistedness = hand.grab_strength
 
+    # hand yaw
+    angle_hand_yaw = degrees(hand.direction.yaw)
+
     # arm angle
     arm = hand.arm
     if arm.is_valid:
         angle_arm = degrees(arm.direction.pitch)
+        angle_arm_yaw = degrees(arm.direction.yaw)
     else:
         angle_arm = 0
+        angle_arm_yaw = 0
 
     def print_arm_status():
         print "Wrist: %d, Rot: %d, Fist: %d%%, Arm: %d" % (angle_wrist, angle_rot_wrist, hand_fistedness * 100, angle_arm)
 
     print_arm_status()
+
+    # send_to_arm(...)
 
 def main():
     # Create a sample controller
