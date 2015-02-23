@@ -12,7 +12,7 @@
 #define kLeapShoulderValN 0
 #define kLeapBaseValN 0
 
-Servo servo_claw; // ?90 - ?110
+Servo servo_claw; // ?80 - ?100
 Servo servo_wrist; // 0 - 180
 Servo servo_twist; // 0 - 180
 Servo servo_elbow; // 40 - 150
@@ -70,7 +70,7 @@ void loop() {
   char leapBytes[100] = {0};
   Serial.readBytesUntil('\x03', leapBytes, sizeof(leapBytes));
   
-  leapClawVal = map(leapClawVal, 0, 100, 90, 110);
+  leapClawVal = map(leapClawVal, 0, 100, 100, 35);
   leapWristVal = map(leapWristVal, -80, 80, 0, 180);
   
   // New Range: -50 - 180
@@ -79,11 +79,11 @@ void loop() {
   } else {
     leapTwistVal = -leapTwistVal + 180;
   }
-  leapTwistVal = map(leapTwistVal, -50, 180, 0, 180);
+  leapTwistVal = map(leapTwistVal, -50, 180, 180, 0);
 
   leapElbowVal = map(leapElbowVal, -100, 70, 40, 150);
   leapShoulderVal = map(leapShoulderVal, -80, 80, 100, 130);
-  leapBaseVal = map(leapBaseVal, -50, 50, 1400, 1600);
+  leapBaseVal = map(leapBaseVal, -50, 50, 1550, 1450);
   
   servo_claw.write(leapClawVal);
   servo_wrist.write(leapWristVal);

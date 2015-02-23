@@ -22,12 +22,29 @@ def serial_deinit(port):
 
 def send_to_arm(arm, angle_wrist, angle_rot_wrist, angle_hand_yaw, hand_fistedness, angle_arm, angle_arm_yaw):
     arm.write("\x02")
-    arm.write(str(angle_wrist) + '\n')
-    arm.write(str(angle_rot_wrist) + '\n')
-    arm.write(str(angle_hand_yaw) + '\n')
-    arm.write(str(hand_fistedness) + '\n')
-    arm.write(str(angle_arm) + '\n')
-    arm.write(str(angle_arm_yaw) + '\n')
+    # arm.write(str(int(angle_wrist) + '\n')
+    # arm.write(str(angle_rot_wrist) + '\n')
+    # arm.write(str(angle_hand_yaw) + '\n')
+    # arm.write(str(hand_fistedness) + '\n')
+    # arm.write(str(angle_arm) + '\n')
+    # arm.write(str(angle_arm_yaw) + '\n')
+
+
+    arm.write(str(int(angle_wrist)) + '\n')
+    arm.write(str(int(angle_rot_wrist)) + '\n')
+    arm.write(str(int(angle_hand_yaw)) + '\n')
+    arm.write(str(int(hand_fistedness)) + '\n')
+    arm.write(str(int(angle_arm)) + '\n')
+    arm.write(str(int(angle_arm_yaw)) + '\n')
+
+
+    # arm.write(str(angle_wrist))
+    # arm.write(str(angle_rot_wrist))
+    # arm.write(str(angle_hand_yaw))
+    # arm.write(str(hand_fistedness))
+    # arm.write(str(angle_arm))
+    # arm.write(str(angle_arm_yaw))
+
     arm.write("\x03")
     time.sleep(0.1)
 
