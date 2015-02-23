@@ -91,7 +91,7 @@ void loop() {
   servo_elbow.write(leapElbowVal);
   servo_shoulder.write(leapShoulderVal);
   servo_base.writeMicroseconds(leapBaseVal);
-
+  
 } 
 
 
